@@ -1,0 +1,90 @@
+.user-notes-appearance-settings {
+  padding: 0.75rem;
+}
+
+.user-notes-appearance-settings .notes {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.user-notes-appearance-settings fieldset {
+  margin: 0 0 0.75rem 0;
+  padding: 0.75rem;
+
+  border: 1px solid var(--color-border-light-primary, #7a695a);
+  border-radius: 4px;
+}
+
+.user-notes-appearance-settings legend {
+  padding: 0 0.35rem;
+  font-weight: bold;
+}
+
+.user-notes-appearance-settings .form-group {
+  align-items: center;
+}
+
+.user-notes-appearance-settings .form-fields {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-notes-appearance-settings input[type="color"] {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  height: 2rem;
+
+  padding: 0;
+  border: 1px solid var(--color-border-light-primary, #7a695a);
+  border-radius: 4px;
+
+  background: transparent;
+  cursor: pointer;
+}
+
+.user-notes-appearance-settings input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.user-notes-range-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-notes-range-row input[type="range"] {
+  flex: 1 1 auto;
+}
+
+.user-notes-range-row output {
+  width: 3rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.user-notes-appearance-settings .sheet-footer,
+.user-notes-appearance-footer {
+  margin-top: 0.75rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-notes-primary-actions {
+  flex: 1 1 auto;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-notes-primary-actions button {
+  flex: 1 1 0;
+}
+
+.user-notes-appearance-footer > .user-notes-reset-appearance {
+  flex: 0 0 auto;
+}

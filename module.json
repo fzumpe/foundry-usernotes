@@ -1,22 +1,22 @@
 {
   "id": "user-notes",
   "title": "User Notes",
-  "description": "User Notes: ein einfaches lokales Notizfenster für Foundry VTT v14. Notizen werden im Browser-localStorage pro Welt und Benutzer gespeichert.",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "authors": [
     {
-      "name": "ChatGPT"
+      "name": "Florian Zumpe"
     }
   ],
   "compatibility": {
     "minimum": "14",
     "verified": "14"
   },
-  "scripts": [
+  "esmodules": [
     "scripts/user-notes.js"
   ],
   "styles": [
-    "styles/user-notes.css"
+    "styles/user-notes-window.css",
+    "styles/user-notes-settings.css"
   ],
   "languages": [],
   "url": "https://github.com/fzumpe/foundry-usernotes",
