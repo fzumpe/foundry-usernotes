@@ -1,5 +1,4 @@
 import {
-  USER_NOTES_MODULE_ID,
   USER_NOTES_TOOL_ID
 } from "./user-notes-constants.js";
 
@@ -8,17 +7,15 @@ import {
 } from "./user-notes-window.js";
 
 export function userNotesRegisterTokenControl(controls) {
-  console.log("User Notes | registering token control", controls);
-
   const tokenControl = controls?.tokens;
 
   if (!tokenControl) {
-    console.warn("User Notes | controls.tokens fehlt", controls);
+    console.warn("User Notes | controls.tokens is not available; token control was not registered");
     return;
   }
 
   if (!tokenControl.tools) {
-    console.warn("User Notes | controls.tokens.tools fehlt", tokenControl);
+    console.warn("User Notes | controls.tokens.tools is not available; token control was not registered");
     return;
   }
 
@@ -30,19 +27,14 @@ export function userNotesRegisterTokenControl(controls) {
     button: true,
     visible: true,
 
-    onChange: (event, active) => {
-      console.log("User Notes | onChange", { event, active });
+    onChange: () => {
       userNotesOpenNotes();
     },
 
-    onClick: event => {
-      console.log("User Notes | onClick", { event });
+    onClick: () => {
       userNotesOpenNotes();
     }
   };
 
-  console.log(
-    "User Notes | token control registered",
-    tokenControl.tools[USER_NOTES_TOOL_ID]
-  );
+  console.log("User Notes | token control button registered");
 }
