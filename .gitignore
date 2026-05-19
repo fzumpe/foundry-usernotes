@@ -1,0 +1,14 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node / build artifacts if the module is extended later
+node_modules/
+dist/
+build/
+*.log
+
+# Archives
+*.zip
