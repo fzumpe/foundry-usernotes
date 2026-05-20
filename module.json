@@ -24,6 +24,6 @@
   ],
   "languages": [],
   "url": "https://github.com/fzumpe/foundry-usernotes",
-  "manifest": "https://raw.githubusercontent.com/fzumpe/foundry-usernotes/feature/export-wysiwyg/module.json",
+  "manifest": "https://raw.githubusercontent.com/fzumpe/foundry-usernotes/V1.0.3/module.json",
   "download": "https://codeload.github.com/fzumpe/foundry-usernotes/zip/refs/tags/V1.0.3"
 }
