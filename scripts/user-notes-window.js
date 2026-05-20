@@ -9,8 +9,9 @@ import {
 
 import {
   userNotesLoadNotes,
+  userNotesLoadPosition,
   userNotesSaveNotes,
-  userNotesPositionKey,
+  userNotesSavePositionData,
   userNotesRemoveSavedPosition
 } from "./user-notes-storage.js";
 
@@ -99,17 +100,15 @@ export function userNotesClampPosition(position) {
 
 export function userNotesRestorePosition(win) {
   try {
-    const raw = window.localStorage.getItem(userNotesPositionKey());
+    const pos = userNotesLoadPosition(null);
 
-    if (!raw) {
+    if (!pos) {
       userNotesApplyPosition(
         win,
         userNotesClampPosition(USER_NOTES_DEFAULT_POSITION)
       );
       return;
     }
-
-    const pos = JSON.parse(raw);
 
     const restoredPosition = {
       left: Number.isFinite(pos.left) ? pos.left : USER_NOTES_DEFAULT_POSITION.left,
@@ -153,10 +152,7 @@ export function userNotesSavePosition(win) {
     height: Math.round(rect.height)
   });
 
-  window.localStorage.setItem(
-    userNotesPositionKey(),
-    JSON.stringify(position)
-  );
+  userNotesSavePositionData(position);
 }
 
 export function userNotesResetPositionAndSize() {
@@ -315,10 +311,15 @@ function userNotesCreateEditor(win, editorElement) {
   const editor = globalThis.Jodit.make(editorElement, {
     height: "100%",
     minHeight: 150,
+
+    allowResizeX: false,
+    allowResizeY: false,
+
     toolbarAdaptive: false,
     askBeforePasteHTML: false,
     askBeforePasteFromWord: false,
     defaultActionOnPaste: "insert_clear_html",
+
     disablePlugins: [
       "about",
       "add-new-line",
@@ -334,6 +335,7 @@ function userNotesCreateEditor(win, editorElement) {
       "speech-recognize",
       "video"
     ],
+
     buttons: [
       "bold",
       "italic",
@@ -527,14 +529,19 @@ export function userNotesOpenNotes() {
   }
 }
 
-export function userNotesRefreshOpenWindow() {
+export function userNotesRefreshOpenWindow(options = {}) {
+  const saveCurrentContent = options.saveCurrentContent ?? true;
+
   const oldWin = document.getElementById(USER_NOTES_WINDOW_ID);
 
   if (!oldWin) {
     return;
   }
 
-  userNotesSaveNotes(userNotesGetEditorValue(oldWin));
+  if (saveCurrentContent) {
+    userNotesSaveNotes(userNotesGetEditorValue(oldWin));
+  }
+
   userNotesSavePosition(oldWin);
   userNotesDestroyEditor(oldWin);
   oldWin.remove();

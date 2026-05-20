@@ -3,6 +3,10 @@ import {
 } from "./user-notes-settings.js";
 
 import {
+  userNotesRegisterBackupSettings
+} from "./user-notes-backup.js";
+
+import {
   userNotesRegisterTokenControl
 } from "./user-notes-controls.js";
 
@@ -23,8 +27,10 @@ Hooks.once("init", () => {
     console.log("User Notes | application registered");
 
     userNotesRegisterSettings(userNotesResetPositionAndSize);
-
     console.log("User Notes | settings registered");
+
+    userNotesRegisterBackupSettings();
+    console.log("User Notes | export/import settings registered");
   } catch (err) {
     console.error("User Notes | error during init", err);
 
