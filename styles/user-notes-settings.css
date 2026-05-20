@@ -1,10 +1,19 @@
-.user-notes-appearance-settings {
+.user-notes-appearance-settings,
+.user-notes-backup-settings {
   padding: 0.75rem;
 }
 
-.user-notes-appearance-settings .notes {
+.user-notes-appearance-settings .notes,
+.user-notes-backup-settings .notes {
   margin-top: 0;
   margin-bottom: 0.75rem;
+}
+
+.user-notes-backup-settings .warning {
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-highlight, #ff6400);
+  border-radius: 4px;
+  background: rgba(255, 100, 0, 0.12);
 }
 
 .user-notes-appearance-settings fieldset {
@@ -20,11 +29,13 @@
   font-weight: bold;
 }
 
-.user-notes-appearance-settings .form-group {
+.user-notes-appearance-settings .form-group,
+.user-notes-backup-settings .form-group {
   align-items: center;
 }
 
-.user-notes-appearance-settings .form-fields {
+.user-notes-appearance-settings .form-fields,
+.user-notes-backup-settings .form-fields {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -64,21 +75,41 @@
   white-space: nowrap;
 }
 
+/*
+ * Dialog footer:
+ * Row 1: Apply + Save side-by-side.
+ * Row 2: Reset colors full width.
+ */
 .user-notes-appearance-settings .sheet-footer,
 .user-notes-appearance-footer {
   margin-top: 0.75rem;
 
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 0.5rem;
 }
 
 .user-notes-primary-actions {
-  flex: 1 1 auto;
-
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: stretch;
   gap: 0.5rem;
+
+  width: 100%;
+}
+
+.user-notes-primary-actions button,
+.user-notes-appearance-footer > .user-notes-reset-appearance {
+  height: 2rem;
+  min-height: 2rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+
+  box-sizing: border-box;
 }
 
 .user-notes-primary-actions button {
@@ -87,4 +118,17 @@
 
 .user-notes-appearance-footer > .user-notes-reset-appearance {
   flex: 0 0 auto;
+  width: 100%;
+}
+
+.user-notes-backup-settings .sheet-footer {
+  margin-top: 0.75rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-notes-backup-settings .sheet-footer button {
+  flex: 1 1 auto;
 }

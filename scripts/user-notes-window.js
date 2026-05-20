@@ -171,6 +171,12 @@ export function userNotesResetPositionAndSize() {
     );
 
     userNotesSavePosition(win);
+
+    const editor = win.__userNotesEditor;
+
+    if (editor?.events) {
+      editor.events.fire("resize");
+    }
   }
 }
 
@@ -234,6 +240,12 @@ export function userNotesMakeDraggable(win) {
 
     drag = null;
     userNotesSavePosition(win);
+
+    const editor = win.__userNotesEditor;
+
+    if (editor?.events) {
+      editor.events.fire("resize");
+    }
   });
 
   handle.addEventListener("pointercancel", event => {
@@ -243,6 +255,12 @@ export function userNotesMakeDraggable(win) {
 
     drag = null;
     userNotesSavePosition(win);
+
+    const editor = win.__userNotesEditor;
+
+    if (editor?.events) {
+      editor.events.fire("resize");
+    }
   });
 }
 
@@ -397,6 +415,10 @@ export function userNotesOpenNotes() {
 
     if (editor) {
       editor.focus();
+
+      if (editor.events) {
+        editor.events.fire("resize");
+      }
     } else {
       win.querySelector(".user-notes-editor")?.focus();
     }
@@ -451,6 +473,12 @@ export function userNotesOpenNotes() {
     userNotesSaveNotes(userNotesGetEditorValue(win));
     userNotesSetStatus("Gespeichert");
     userNotesSavePosition(win);
+
+    const editor = win.__userNotesEditor;
+
+    if (editor?.events) {
+      editor.events.fire("resize");
+    }
   });
 
   win.querySelector(".user-notes-close")?.addEventListener("click", () => {
@@ -475,6 +503,12 @@ export function userNotesOpenNotes() {
     }
 
     userNotesSavePosition(win);
+
+    const editor = win.__userNotesEditor;
+
+    if (editor?.events) {
+      editor.events.fire("resize");
+    }
   });
 
   resizeObserver.observe(win);
@@ -484,6 +518,10 @@ export function userNotesOpenNotes() {
 
   if (win.__userNotesEditor) {
     win.__userNotesEditor.focus();
+
+    if (win.__userNotesEditor.events) {
+      win.__userNotesEditor.events.fire("resize");
+    }
   } else {
     editorElement.focus();
   }

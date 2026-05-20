@@ -122,6 +122,11 @@ export function userNotesApplyWindowSettings(win) {
   const appearance = userNotesLoadValidatedAppearance();
 
   win.style.setProperty(
+    "--user-notes-window-background-solid",
+    appearance.windowBackgroundColor
+  );
+
+  win.style.setProperty(
     "--user-notes-window-background",
     userNotesHexToRgba(
       appearance.windowBackgroundColor,
