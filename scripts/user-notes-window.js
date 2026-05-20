@@ -18,6 +18,11 @@ import {
   userNotesApplyWindowSettings
 } from "./user-notes-settings.js";
 
+import {
+  userNotesNormalizeStoredNotesForEditor,
+  userNotesSanitizeHtml
+} from "./user-notes-sanitize.js";
+
 let userNotesSaveTimer = null;
 
 export function userNotesSetStatus(text) {
@@ -35,7 +40,7 @@ export function userNotesDebouncedSave(value) {
   userNotesSetStatus("Ungespeichert …");
 
   userNotesSaveTimer = window.setTimeout(() => {
-    userNotesSaveNotes(value);
+    userNotesSaveNotes(userNotesSanitizeHtml(value));
     userNotesSetStatus("Gespeichert");
   }, 250);
 }
@@ -241,6 +246,144 @@ export function userNotesMakeDraggable(win) {
   });
 }
 
+function userNotesGetEditorValue(win) {
+  const editor = win.__userNotesEditor;
+
+  if (editor) {
+    return userNotesSanitizeHtml(editor.value);
+  }
+
+  const textarea = win.querySelector(".user-notes-editor");
+
+  if (textarea instanceof HTMLTextAreaElement) {
+    return userNotesSanitizeHtml(textarea.value);
+  }
+
+  return "";
+}
+
+function userNotesDestroyEditor(win) {
+  const editor = win.__userNotesEditor;
+
+  if (editor && typeof editor.destruct === "function") {
+    editor.destruct();
+  }
+
+  win.__userNotesEditor = null;
+}
+
+function userNotesInsertSymbol(editor, symbol) {
+  editor.s.insertHTML(`${symbol} `);
+}
+
+function userNotesCreateEditor(win, editorElement) {
+  const initialContent = userNotesNormalizeStoredNotesForEditor(userNotesLoadNotes());
+
+  if (!globalThis.Jodit) {
+    console.warn("User Notes | Jodit is not available. Falling back to plain textarea.");
+
+    editorElement.value = initialContent
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/p>/gi, "\n")
+      .replace(/<[^>]+>/g, "");
+
+    editorElement.addEventListener("input", event => {
+      userNotesDebouncedSave(event.currentTarget.value);
+    });
+
+    return null;
+  }
+
+  const editor = globalThis.Jodit.make(editorElement, {
+    height: "100%",
+    minHeight: 150,
+    toolbarAdaptive: false,
+    askBeforePasteHTML: false,
+    askBeforePasteFromWord: false,
+    defaultActionOnPaste: "insert_clear_html",
+    disablePlugins: [
+      "about",
+      "add-new-line",
+      "ai-assistant",
+      "file",
+      "image",
+      "media",
+      "paste-storage",
+      "powered-by-jodit",
+      "preview",
+      "print",
+      "source",
+      "speech-recognize",
+      "video"
+    ],
+    buttons: [
+      "bold",
+      "italic",
+      "underline",
+      "strikethrough",
+      "|",
+      "ul",
+      "ol",
+      "|",
+      "font",
+      "fontsize",
+      "brush",
+      "|",
+      "table",
+      "|",
+      "undo",
+      "redo",
+      "|",
+      {
+        name: "checkbox-empty",
+        tooltip: "Kästchen einfügen",
+        icon: "☐",
+        exec: editorInstance => userNotesInsertSymbol(editorInstance, "☐")
+      },
+      {
+        name: "checkbox-checked",
+        tooltip: "Angehaktes Kästchen einfügen",
+        icon: "☑",
+        exec: editorInstance => userNotesInsertSymbol(editorInstance, "☑")
+      },
+      {
+        name: "checkmark",
+        tooltip: "Haken einfügen",
+        icon: "✓",
+        exec: editorInstance => userNotesInsertSymbol(editorInstance, "✓")
+      },
+      {
+        name: "crossmark",
+        tooltip: "Kreuz einfügen",
+        icon: "✗",
+        exec: editorInstance => userNotesInsertSymbol(editorInstance, "✗")
+      },
+      {
+        name: "bordered-text",
+        tooltip: "Rahmen um markierten Text",
+        icon: "▣",
+        exec: editorInstance => {
+          const selected = editorInstance.s.html || "&nbsp;";
+
+          editorInstance.s.insertHTML(
+            `<span style="border: 1px solid currentColor; padding: 2px 4px;">${selected}</span>`
+          );
+        }
+      }
+    ]
+  });
+
+  editor.value = initialContent;
+
+  editor.events.on("change", () => {
+    userNotesDebouncedSave(editor.value);
+  });
+
+  win.__userNotesEditor = editor;
+
+  return editor;
+}
+
 export function userNotesOpenNotes() {
   let win = document.getElementById(USER_NOTES_WINDOW_ID);
 
@@ -249,7 +392,15 @@ export function userNotesOpenNotes() {
     userNotesRestorePosition(win);
     userNotesApplyWindowSettings(win);
     userNotesBringToFront(win);
-    win.querySelector("textarea")?.focus();
+
+    const editor = win.__userNotesEditor;
+
+    if (editor) {
+      editor.focus();
+    } else {
+      win.querySelector(".user-notes-editor")?.focus();
+    }
+
     return;
   }
 
@@ -278,7 +429,7 @@ export function userNotesOpenNotes() {
     </header>
 
     <main class="user-notes-content">
-      <textarea class="user-notes-textarea" spellcheck="true" placeholder="Notizen für diese Welt und diesen Benutzer …"></textarea>
+      <textarea class="user-notes-editor" spellcheck="true"></textarea>
     </main>
   `;
 
@@ -287,27 +438,23 @@ export function userNotesOpenNotes() {
   userNotesApplyWindowSettings(win);
   userNotesRestorePosition(win);
 
-  const textarea = win.querySelector(".user-notes-textarea");
+  const editorElement = win.querySelector(".user-notes-editor");
 
-  if (!(textarea instanceof HTMLTextAreaElement)) {
-    console.error(`${USER_NOTES_MODULE_ID} | Notes textarea could not be created.`);
+  if (!(editorElement instanceof HTMLTextAreaElement)) {
+    console.error(`${USER_NOTES_MODULE_ID} | Notes editor could not be created.`);
     return;
   }
 
-  textarea.value = userNotesLoadNotes();
-
-  textarea.addEventListener("input", event => {
-    userNotesDebouncedSave(event.currentTarget.value);
-  });
+  userNotesCreateEditor(win, editorElement);
 
   win.querySelector(".user-notes-save")?.addEventListener("click", () => {
-    userNotesSaveNotes(textarea.value);
+    userNotesSaveNotes(userNotesGetEditorValue(win));
     userNotesSetStatus("Gespeichert");
     userNotesSavePosition(win);
   });
 
   win.querySelector(".user-notes-close")?.addEventListener("click", () => {
-    userNotesSaveNotes(textarea.value);
+    userNotesSaveNotes(userNotesGetEditorValue(win));
     userNotesSavePosition(win);
     win.hidden = true;
   });
@@ -334,7 +481,12 @@ export function userNotesOpenNotes() {
 
   userNotesMakeDraggable(win);
   userNotesBringToFront(win);
-  textarea.focus();
+
+  if (win.__userNotesEditor) {
+    win.__userNotesEditor.focus();
+  } else {
+    editorElement.focus();
+  }
 }
 
 export function userNotesRefreshOpenWindow() {
@@ -344,14 +496,9 @@ export function userNotesRefreshOpenWindow() {
     return;
   }
 
-  const textarea = oldWin.querySelector(".user-notes-textarea");
-
-  if (textarea instanceof HTMLTextAreaElement) {
-    userNotesSaveNotes(textarea.value);
-  }
-
+  userNotesSaveNotes(userNotesGetEditorValue(oldWin));
   userNotesSavePosition(oldWin);
-
+  userNotesDestroyEditor(oldWin);
   oldWin.remove();
 
   userNotesOpenNotes();

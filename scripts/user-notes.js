@@ -8,11 +8,13 @@ import {
 
 import {
   userNotesOpenNotes,
+  userNotesRefreshOpenWindow,
   userNotesResetPositionAndSize
 } from "./user-notes-window.js";
 
 globalThis.UserNotes = {
   open: userNotesOpenNotes,
+  refresh: userNotesRefreshOpenWindow,
   resetPosition: userNotesResetPositionAndSize
 };
 

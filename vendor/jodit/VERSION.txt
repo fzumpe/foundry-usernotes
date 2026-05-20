@@ -1,0 +1,3 @@
+Jodit Editor 4.12.2
+Source: https://github.com/xdan/jodit/tree/4.12.2
+License: MIT
