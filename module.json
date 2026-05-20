@@ -1,7 +1,7 @@
 {
   "id": "user-notes",
   "title": "User Notes",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "authors": [
     {
       "name": "Florian Zumpe"
@@ -11,15 +11,19 @@
     "minimum": "14",
     "verified": "14"
   },
+  "scripts": [
+    "vendor/jodit/jodit.min.js"
+  ],
   "esmodules": [
     "scripts/user-notes.js"
   ],
   "styles": [
+    "vendor/jodit/jodit.min.css",
     "styles/user-notes-window.css",
     "styles/user-notes-settings.css"
   ],
   "languages": [],
   "url": "https://github.com/fzumpe/foundry-usernotes",
-  "manifest": "https://raw.githubusercontent.com/fzumpe/foundry-usernotes/main/module.json",
-  "download": "https://codeload.github.com/fzumpe/foundry-usernotes/zip/refs/tags/V1.0.2"
+  "manifest": "https://raw.githubusercontent.com/fzumpe/foundry-usernotes/feature/export-wysiwyg/module.json",
+  "download": "https://codeload.github.com/fzumpe/foundry-usernotes/zip/refs/tags/V1.0.3"
 }
